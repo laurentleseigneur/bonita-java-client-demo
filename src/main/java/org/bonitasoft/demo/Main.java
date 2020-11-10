@@ -1,3 +1,5 @@
+package org.bonitasoft.demo;
+
 import org.bonitasoft.web.client.BonitaClient;
 import org.bonitasoft.web.client.model.ProcessDefinition;
 import org.bonitasoft.web.client.model.Session;
@@ -5,11 +7,15 @@ import org.bonitasoft.web.client.services.policies.ApplicationImportPolicy;
 import org.bonitasoft.web.client.services.policies.OrganizationImportPolicy;
 import org.bonitasoft.web.client.services.policies.ProcessImportPolicy;
 import org.bonitasoft.web.client.services.policies.ProfileImportPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
 
 public class Main {
+
+	static Logger logger = LoggerFactory.getLogger(Main.class);
 
 	public static void main(String[] args) throws Exception {
 		String bonitaUrl = args[0];
@@ -30,13 +36,14 @@ public class Main {
 		ProcessImportPolicy processImportPolicy = getProcessImportPolicy();
 
 		// Create a client
-		BonitaClient client = BonitaClient.builder(bonitaUrl).build();
+		BonitaClient client = BonitaClient.builder(bonitaUrl)
+				.build();
 
 		// Login
 		Session session = client.login(username, password);
 
 		// Log Bonita server version
-		log("Bonita version:" + session.getVersion());
+		logger.info("Connected to Bonita url:{} version:{}", bonitaUrl, session.getVersion());
 
 		//Organization
 		client.users().importOrganization(organizationFile, organizationImportPolicy);
@@ -88,10 +95,6 @@ public class Main {
 
 	private static OrganizationImportPolicy getOrganizationImportPolicy() {
 		return OrganizationImportPolicy.FAIL_ON_DUPLICATES;
-	}
-
-	private static void log(String message) {
-		System.out.println(message);
 	}
 
 }
